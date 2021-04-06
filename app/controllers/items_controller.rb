@@ -25,7 +25,7 @@ class ItemsController < ApplicationController
 
   def item_serializer_options()
     {
-      except: [:created_at, :updated_at]
+      except: [:updated_at]
     }
   end
 
