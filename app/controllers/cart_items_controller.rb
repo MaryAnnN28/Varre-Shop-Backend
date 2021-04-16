@@ -17,7 +17,7 @@ class CartItemsController < ApplicationController
   end
 
   def update 
-    cartItem = CartItem.find(params[:id])
+    cartItem = CartItem.find_by(user_id: current_user.id, item_id: cart_item_params[:item_id])
     cartItem.update(cart_item_params)
     render json: cartItem.to_json()
   end
@@ -36,7 +36,7 @@ class CartItemsController < ApplicationController
   end
 
   def cart_item_params
-    params.require(:cart_item).permit(:card_id, :item_id, :quantity)
+    params.require(:cart_item).permit(:cart_id, :item_id, :quantity)
   end
 
 

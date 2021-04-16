@@ -1,8 +1,8 @@
-class UsersController < ApplicationController
-  # skip_before_action :authorized, only: [:create, :index]
+class Api::V1::UsersController < ApplicationController
 
   def index 
-    render json: User.all.to_json(user_serializer_options)
+    users = User.all
+    render json:users
   end
 
   def show 
@@ -14,11 +14,18 @@ class UsersController < ApplicationController
     user = User.create(user_params)
     Cart.create(user_id: user.id)
     if user.valid?
-      render json: { user: user, status: :created}
+      token = JWT.encode({user_id: user.id}, "varre")
+      render json: {user: UserSerializer.new(user), token: token}, status: :created
     else
-      render json: { error: 'failed to create new user', status: :not_acceptable}
+      render json: { message: user.errors.full_messages}, status: :not_acceptable
     end
   end
+
+  def autologin
+    user = current_user ? current_user : {message: "Please log in"}
+    render json: user
+  end
+
 
   def update
     user = User.find(params[:id])
@@ -33,16 +40,8 @@ class UsersController < ApplicationController
 
   private
 
-  def user_serializer_options()
-    {
-      except: [:created_at, :updated_at]
-    }
-  end
-
   def user_params
     params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation)
   end
-
-
 
 end

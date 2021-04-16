@@ -10,16 +10,12 @@ class ItemsController < ApplicationController
     render json: item.to_json(item_serializer_options)
   end
 
-  def create
-    item = Item.new(item_serializer_options)
-    item.save
-    render json: item.to_json()
-  end
-
-  def destroy
+  def update 
     item = Item.find(params[:id])
-    item.destroy
+    item.update
+    render json: item 
   end
+  
 
   private
 
