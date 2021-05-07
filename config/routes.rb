@@ -4,16 +4,23 @@ Rails.application.routes.draw do
   namespace :api do 
     namespace :v1 do 
       post "/users", to: "users#create"
+      get '/users/:user_id', to: 'users#show'
       get "/users", to: "users#index"
-      post "/login", to: "auth#login"
-      get "/authlogin", to: "users#autologin"
+      post "/login", to: "sessions#create"
+      post "/logout", to: "sessions#destroy"
+      get "/logged_in", to: "sessions#is_logged_in?"
     end
   end
   
 
-  resources :users, only: [:create, :index, :show]
+  resources :users, only: [:create, :index, :show] do 
+    resources :cart_items, only: [:create, :show, :destroy]
+  end
+  
+
+  resources :items, only: [:show, :index, :destroy, :create]
+
+
   resources :carts
-  resources :items
-  resources :cart_items
   resources :reviews 
 end
